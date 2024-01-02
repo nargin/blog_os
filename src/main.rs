@@ -9,7 +9,18 @@ fn panic(_info: &PanicInfo) -> ! {
 	loop {}
 }
 
+static GOODBYE: &[u8] = b"Goobye World!";
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+	let vga_buffer = 0xb8000 as *mut u8;
+
+	for (i, &byte) in GOODBYE.iter().enumerate() {
+		unsafe {
+			*vga_buffer.offset(i as isize * 2) = byte;
+			*vga_buffer.offset(i as isize * 2 + 1) = 0xe;
+		}
+	}
+	
 	loop {}
 }
